@@ -52,7 +52,7 @@ score = 0
 # enemies
 enemy_image = pygame.image.load('assets/enemies/spike_monster.png')
 enemies = [
-  pygame.Rect(350, 274, 50, 26)
+  pygame.Rect(150, 274, 35, 25)
 ]
 
 lives = 3
