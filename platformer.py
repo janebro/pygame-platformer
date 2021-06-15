@@ -46,7 +46,10 @@ collectables = [
 
 score = 0
 
-# bgm
+# ---
+# BGM
+# ---
+
 # Starting the mixer
 pygame.mixer.init()
 # Loading the song
