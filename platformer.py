@@ -5,6 +5,9 @@
 # Chicken leg png from:
 # https://www.pngfind.com/download/xJoooi_chicken-leg-xbox-a-button-pixel-hd-png/
 
+# Spike monster by bevouliin.com
+# https://opengameart.org/content/bevouliin-free-ingame-items-spike-monsters
+
 import pygame
 
 # constant variables
@@ -46,6 +49,14 @@ collectables = [
 
 score = 0
 
+# enemies
+enemy_image = pygame.image.load('assets/enemies/spike_monster.png')
+enemies = [
+  pygame.Rect(350, 274, 50, 26)
+]
+
+lives = 3
+
 # ---
 # BGM
 # ---
@@ -55,9 +66,9 @@ pygame.mixer.init()
 # Loading the song
 pygame.mixer.music.load('assets/bgm/quest.mp3')
 # Setting the volume
-pygame.mixer.music.set_volume(0.1)
+pygame.mixer.music.set_volume(0.2)
 # Start playing the song looping forever
-pygame.mixer.music.play(-1)
+#pygame.mixer.music.play(-1)
 
 running = True
 
@@ -88,7 +99,7 @@ while running:
     player_speed = -5
     # jump sound
     jump_sfx = pygame.mixer.Sound('assets/sfx/jump.wav')
-    jump_sfx.set_volume(0.3)
+    jump_sfx.set_volume(0.4)
     jump_sfx.play()
 
   # ------
@@ -138,10 +149,22 @@ while running:
   for c in collectables:
     if c.colliderect(player_rect):
       pick_sfx = pygame.mixer.Sound('assets/sfx/collect.wav')
-      pick_sfx.set_volume(0.4)
+      pick_sfx.set_volume(0.5)
       pick_sfx.play()
       collectables.remove(c)
       score += 1
+
+  # see if any enemy hit
+  for e in enemies:
+    if e.colliderect(player_rect):
+      pick_sfx = pygame.mixer.Sound('assets/sfx/hurt.wav')
+      pick_sfx.set_volume(0.1)
+      pick_sfx.play()
+      lives -= 1
+      # reset player position
+      player_x = 300
+      player_y = 0
+      player_speed = 0
 
   # -----
   # DRAW
@@ -156,7 +179,11 @@ while running:
 
   # collectables
   for c in collectables:
-    screen.blit(chicken_leg, (c[0], c[1]))
+    screen.blit(chicken_leg, (c.x, c.y))
+
+  # enemies
+  for e in enemies:
+    screen.blit(enemy_image, (e.x, e.y))
 
   # player
   screen.blit(player_image, (player_x, player_y))
