@@ -20,6 +20,7 @@ pygame.init()
 screen = pygame.display.set_mode(SCREEN_SIZE)
 pygame.display.set_caption('Janebro\'s Platform Game')
 clock = pygame.time.Clock()
+font = pygame.font.Font(pygame.font.get_default_font(), 24)
 
 # player
 player_image = pygame.image.load('assets/vita/vita_00.png')
@@ -56,6 +57,8 @@ enemies = [
 ]
 
 lives = 3
+lives_image = pygame.image.load('assets/vita/vita_00.png')
+lives_image = pygame.transform.scale(lives_image, (player_image.get_width() - 15, player_image.get_height() - 15))
 
 # ---
 # BGM
@@ -189,7 +192,17 @@ while running:
   screen.blit(player_image, (player_x, player_y))
 
   # HUD
-  screen.blit(chicken_leg, (10 ,10))
+
+  # score
+  screen.blit(chicken_leg, (10, 10))
+  score_text = font.render(str(score), True, MUSTARD, DARK_GREY)
+  score_text_rect = score_text.get_rect()
+  score_text_rect.topleft = (45, 15)
+  screen.blit(score_text, score_text_rect)
+
+  # lives
+  for l in range(lives):
+    screen.blit(lives_image, (600 + (l*30), 10))
 
   #present screen
   pygame.display.flip()
