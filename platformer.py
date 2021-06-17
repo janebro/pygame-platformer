@@ -39,6 +39,7 @@ player_x = 300
 player_y = 0
 player_speed = 0
 player_acceleration = 0.2
+player_direction = 'right'
 
 # platforms
 platforms = [
@@ -69,9 +70,9 @@ lives = 3
 lives_image = pygame.image.load('assets/vita/vita_00.png')
 lives_image = pygame.transform.scale(lives_image, (player_image.get_width() - 15, player_image.get_height() - 15))
 
-# ---
-# BGM
-# ---
+# ------- #
+#   BGM   #
+# ------- #
 
 # Starting the mixer
 pygame.mixer.init()
@@ -87,9 +88,9 @@ running = True
 while running:
 # game loop
 
-  # -----
-  # INPUT
-  #------
+  # --------- #
+  #   INPUT   #
+  # --------- #
 
   # check for quit
   for event in pygame.event.get():
@@ -102,11 +103,14 @@ while running:
 
     # player input
     keys = pygame.key.get_pressed()
-
+    # left
     if keys[pygame.K_LEFT]:
       new_player_x -= 2
+      player_direction = 'left'
+    # right
     if keys[pygame.K_RIGHT]:
       new_player_x += 2
+      player_direction = 'right'
     # if on the ground
     if keys[pygame.K_SPACE] and player_on_ground:
       player_speed = -5
@@ -115,9 +119,9 @@ while running:
       jump_sfx.set_volume(0.4)
       jump_sfx.play()
 
-    # ------
-    # UPDATE
-    # ------
+    # ---------- #
+    #   UPDATE   #
+    # ---------- #
 
     # horizontal movement
 
@@ -186,9 +190,9 @@ while running:
         if lives <= 0:
           game_state = 'lose'
 
-  # -----
-  # DRAW
-  #------
+  # -------- #
+  #   DRAW   #
+  # -------- #
 
   # background
   screen.fill(DARK_GREY)
@@ -206,7 +210,10 @@ while running:
     screen.blit(enemy_image, (e.x, e.y))
 
   # player
-  screen.blit(player_image, (player_x, player_y))
+  if player_direction == 'right':
+    screen.blit(player_image, (player_x, player_y))
+  elif player_direction == 'left':
+    screen.blit(pygame.transform.flip(player_image, True, False), (player_x, player_y))
 
   # HUD
 
