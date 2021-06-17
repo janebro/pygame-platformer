@@ -8,6 +8,9 @@
 # Spike monster by bevouliin.com
 # https://opengameart.org/content/bevouliin-free-ingame-items-spike-monsters
 
+# All SFX and BGM sounds from freesound.org
+# https://freesound.org/
+
 import pygame
 
 def drawText(string, x, y):
@@ -15,6 +18,11 @@ def drawText(string, x, y):
   text_rect = text.get_rect()
   text_rect.topleft = (x, y)
   screen.blit(text, text_rect)
+
+def playSfx(file_path, volume):
+  sfx = pygame.mixer.Sound(file_path)
+  sfx.set_volume(volume)
+  sfx.play()
 
 # constant variables
 SCREEN_SIZE = (700,500)
@@ -79,9 +87,9 @@ pygame.mixer.init()
 # Loading the song
 pygame.mixer.music.load('assets/bgm/quest.mp3')
 # Setting the volume
-pygame.mixer.music.set_volume(0.2)
+pygame.mixer.music.set_volume(0.15)
 # Start playing the song looping forever
-#pygame.mixer.music.play(-1)
+pygame.mixer.music.play(-1)
 
 running = True
 
@@ -115,9 +123,7 @@ while running:
     if keys[pygame.K_SPACE] and player_on_ground:
       player_speed = -5
       # jump sound
-      jump_sfx = pygame.mixer.Sound('assets/sfx/jump.wav')
-      jump_sfx.set_volume(0.4)
-      jump_sfx.play()
+      playSfx('assets/sfx/jump.wav', 0.4)
 
     # ---------- #
     #   UPDATE   #
@@ -165,22 +171,19 @@ while running:
     player_rect = pygame.Rect(player_x, player_y, player_width, player_height)
     for c in collectables:
       if c.colliderect(player_rect):
-        pick_sfx = pygame.mixer.Sound('assets/sfx/collect.wav')
-        pick_sfx.set_volume(0.5)
-        pick_sfx.play()
+        playSfx('assets/sfx/collect.wav', 0.5)
         collectables.remove(c)
         score += 1
         # changing game_state to win
         if score >= 2:
+          playSfx('assets/sfx/stage-clear.wav', 0.2)
           game_state = 'win'
 
 
     # see if any enemy hit
     for e in enemies:
       if e.colliderect(player_rect):
-        pick_sfx = pygame.mixer.Sound('assets/sfx/hurt.wav')
-        pick_sfx.set_volume(0.1)
-        pick_sfx.play()
+        playSfx('assets/sfx/hurt.wav', 0.2)
         lives -= 1
         # reset player position
         player_x = 300
@@ -188,6 +191,7 @@ while running:
         player_speed = 0
         # changing game_state to lose
         if lives <= 0:
+          playSfx('assets/sfx/game-over.wav', 0.2)
           game_state = 'lose'
 
   # -------- #
@@ -229,6 +233,8 @@ while running:
     drawText('YOU WIN!', 100, 100)
   if game_state == 'lose':
     drawText('YOU LOSE!', 100, 100)
+  if game_state != 'playing':
+    pygame.mixer.music.stop()
 
   #present screen
   pygame.display.flip()
