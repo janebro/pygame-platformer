@@ -64,7 +64,7 @@ player_animations = {
     pygame.image.load('assets/vita/vita_06.png'),
     pygame.image.load('assets/vita/vita_07.png'),
     pygame.image.load('assets/vita/vita_08.png'),
-    pygame.image.load('assets/vita/vita_09.png'),
+    pygame.image.load('assets/vita/vita_09.png')
   ]),
   'jumping': engine.Animation([
     pygame.image.load('assets/vita/vita_11.png')
@@ -153,14 +153,14 @@ while running:
     if keys[pygame.K_LEFT]:
       new_player_x -= 2
       player_direction = 'left'
-      player_state = 'walking'
+      if player_on_ground:
+        player_state = 'walking'
     # right
     if keys[pygame.K_RIGHT]:
       new_player_x += 2
       player_direction = 'right'
-      player_state = 'walking'
-      if not player_on_ground:
-        player_state = 'jumping'
+      if player_on_ground:
+        player_state = 'walking'
     # jump
     if keys[pygame.K_SPACE] and player_on_ground:
       player_speed = -5
