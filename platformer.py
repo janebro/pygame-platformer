@@ -49,6 +49,24 @@ player_y = 0
 player_speed = 0
 player_acceleration = 0.2
 player_direction = 'right'
+player_state = 'idle' # or 'walking'
+
+player_animations = {
+  'idle': engine.Animation([
+    pygame.image.load('assets/vita/vita_00.png'),
+    pygame.image.load('assets/vita/vita_01.png'),
+    pygame.image.load('assets/vita/vita_02.png'),
+    pygame.image.load('assets/vita/vita_03.png')
+  ]),
+  'walking': engine.Animation([
+    pygame.image.load('assets/vita/vita_04.png'),
+    pygame.image.load('assets/vita/vita_05.png'),
+    pygame.image.load('assets/vita/vita_06.png'),
+    pygame.image.load('assets/vita/vita_07.png'),
+    pygame.image.load('assets/vita/vita_08.png'),
+    pygame.image.load('assets/vita/vita_09.png'),
+  ])
+}
 
 # platforms
 platforms = [
@@ -120,6 +138,9 @@ while running:
     # update collectables animation
     collectable_animation.update()
 
+    # update player animations
+    player_animations[player_state].update()
+
     new_player_x = player_x
     new_player_y = player_y
 
@@ -129,10 +150,14 @@ while running:
     if keys[pygame.K_LEFT]:
       new_player_x -= 2
       player_direction = 'left'
+      player_state = 'walking'
     # right
     if keys[pygame.K_RIGHT]:
       new_player_x += 2
       player_direction = 'right'
+      player_state = 'walking'
+    if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
+      player_state = 'idle'
     # if on the ground
     if keys[pygame.K_SPACE] and player_on_ground:
       player_speed = -5
@@ -217,7 +242,7 @@ while running:
 
   # collectables
   for c in collectables:
-    collectable_animation.draw(screen, c.x, c.y)
+    collectable_animation.draw(screen, c.x, c.y, False, False)
 
   # enemies
   for e in enemies:
@@ -225,9 +250,11 @@ while running:
 
   # player
   if player_direction == 'right':
-    screen.blit(player_image, (player_x, player_y))
+    #screen.blit(player_image, (player_x, player_y))
+    player_animations[player_state].draw(screen, player_x, player_y, False, False)
   elif player_direction == 'left':
-    screen.blit(pygame.transform.flip(player_image, True, False), (player_x, player_y))
+    #screen.blit(pygame.transform.flip(player_image, True, False), (player_x, player_y))
+    player_animations[player_state].draw(screen, player_x, player_y, True, False)
 
   # HUD
 
