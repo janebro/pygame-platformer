@@ -65,6 +65,9 @@ player_animations = {
     pygame.image.load('assets/vita/vita_07.png'),
     pygame.image.load('assets/vita/vita_08.png'),
     pygame.image.load('assets/vita/vita_09.png'),
+  ]),
+  'jumping': engine.Animation([
+    pygame.image.load('assets/vita/vita_11.png')
   ])
 }
 
@@ -156,13 +159,16 @@ while running:
       new_player_x += 2
       player_direction = 'right'
       player_state = 'walking'
-    if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
-      player_state = 'idle'
-    # if on the ground
+      if not player_on_ground:
+        player_state = 'jumping'
+    # jump
     if keys[pygame.K_SPACE] and player_on_ground:
       player_speed = -5
-      # jump sound
+      player_state = 'jumping'
       playSfx('assets/sfx/jump.wav', 0.4)
+    # idle
+    if not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT] and not keys[pygame.K_SPACE]:
+      player_state = 'idle'
 
     # horizontal movement
 
@@ -214,7 +220,6 @@ while running:
           playSfx('assets/sfx/stage-clear.wav', 0.2)
           game_state = 'win'
 
-
     # see if any enemy hit
     for e in enemies:
       if e.colliderect(player_rect):
@@ -249,12 +254,10 @@ while running:
     screen.blit(enemy_image, (e.x, e.y))
 
   # player
-  if player_direction == 'right':
-    #screen.blit(player_image, (player_x, player_y))
-    player_animations[player_state].draw(screen, player_x, player_y, False, False)
-  elif player_direction == 'left':
-    #screen.blit(pygame.transform.flip(player_image, True, False), (player_x, player_y))
+  if player_direction == 'left':
     player_animations[player_state].draw(screen, player_x, player_y, True, False)
+  else :
+    player_animations[player_state].draw(screen, player_x, player_y, False, False)
 
   # HUD
 
