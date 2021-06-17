@@ -12,6 +12,7 @@
 # https://freesound.org/
 
 import pygame
+import engine
 
 def drawText(string, x, y):
   text = font.render(string, True, MUSTARD, DARK_GREY)
@@ -60,7 +61,13 @@ platforms = [
 ]
 
 # collectables
-chicken_leg = pygame.image.load('assets/collectables/chicken.png')
+chicken_leg = pygame.image.load('assets/collectables/chicken-leg/chicken_leg_0.png')
+collectable_animation = engine.Animation([
+  pygame.image.load('assets/collectables/chicken-leg/chicken_leg_0.png'),
+  pygame.image.load('assets/collectables/chicken-leg/chicken_leg_1.png'),
+  pygame.image.load('assets/collectables/chicken-leg/chicken_leg_2.png'),
+  pygame.image.load('assets/collectables/chicken-leg/chicken_leg_3.png')
+])
 collectables = [
   pygame.Rect(100,200, 30, 30),
   pygame.Rect(200,250, 30, 30)
@@ -89,7 +96,7 @@ pygame.mixer.music.load('assets/bgm/quest.mp3')
 # Setting the volume
 pygame.mixer.music.set_volume(0.15)
 # Start playing the song looping forever
-pygame.mixer.music.play(-1)
+#pygame.mixer.music.play(-1)
 
 running = True
 
@@ -104,8 +111,15 @@ while running:
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       running = False
+
+  # ---------- #
+  #   UPDATE   #
+  # ---------- #
   
   if game_state == 'playing':
+    # update collectables animation
+    collectable_animation.update()
+
     new_player_x = player_x
     new_player_y = player_y
 
@@ -124,10 +138,6 @@ while running:
       player_speed = -5
       # jump sound
       playSfx('assets/sfx/jump.wav', 0.4)
-
-    # ---------- #
-    #   UPDATE   #
-    # ---------- #
 
     # horizontal movement
 
@@ -207,7 +217,7 @@ while running:
 
   # collectables
   for c in collectables:
-    screen.blit(chicken_leg, (c.x, c.y))
+    collectable_animation.draw(screen, c.x, c.y)
 
   # enemies
   for e in enemies:
